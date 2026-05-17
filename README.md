@@ -1,0 +1,35 @@
+# Book Bob
+
+A Next.js App Router MVP for sharing a camper calendar, requesting bookings, approving trips, and keeping a trip history with reviews and photos.
+
+## Setup
+
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` in the Supabase SQL editor.
+   - If you already ran the schema before this fix, run `supabase/fixes/001-camper-creator-select-policy.sql` once.
+   - Then run `supabase/fixes/002-strict-return-date-after-pickup.sql` once to require return dates after pickup dates.
+3. Copy `.env.example` to `.env.local` and fill in:
+
+```bash
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
+NEXT_PUBLIC_APP_URL=http://localhost:3000
+```
+
+4. Optional email delivery:
+
+```bash
+RESEND_API_KEY=re_your_key
+APP_EMAIL_FROM="Book Bob <bookings@example.com>"
+```
+
+Without `RESEND_API_KEY`, booking emails are skipped and logged by the server.
+
+## Run
+
+```bash
+npm install
+npm run dev
+```
+
+Open `http://localhost:3000`, sign in by magic link, create the camper, and invite the second owner.

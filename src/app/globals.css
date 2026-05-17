@@ -1,0 +1,752 @@
+:root {
+  --background: #f6f7f6;
+  --surface: #ffffff;
+  --surface-alt: #eef4f1;
+  --ink: #14211d;
+  --muted: #61706b;
+  --line: #d8dfdc;
+  --accent: #123d36;
+  --accent-soft: #dcece7;
+  --blue: #2e5eaa;
+  --amber: #a45f00;
+  --coral: #b84435;
+  --green: #247451;
+  --radius: 8px;
+  --shadow: 0 18px 50px rgba(18, 61, 54, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--background);
+}
+
+body {
+  margin: 0;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgba(220, 236, 231, 0.7), rgba(246, 247, 246, 0) 280px),
+    var(--background);
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+code,
+pre {
+  font-family: "SFMono-Regular", Consolas, "Liberation Mono", monospace;
+}
+
+.appShell {
+  width: min(1440px, 100%);
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.centeredShell {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+}
+
+.topBar,
+.dashboardHeader,
+.calendarHeader,
+.detailNav,
+.tripHero,
+.headerActions,
+.panelTitle,
+.buttonRow {
+  display: flex;
+  align-items: center;
+}
+
+.topBar {
+  justify-content: space-between;
+  min-height: 64px;
+  margin-bottom: 28px;
+}
+
+.brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 800;
+  font-size: 18px;
+}
+
+.brandMark {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: #ffffff;
+  background: var(--accent);
+  border-radius: var(--radius);
+}
+
+.iconTextButton,
+.button,
+.iconButton,
+.segmented a {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  color: var(--ink);
+}
+
+.iconTextButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 12px;
+}
+
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 14px;
+  font-weight: 700;
+}
+
+.button.primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #ffffff;
+}
+
+.button.secondary {
+  background: var(--surface);
+}
+
+.button.danger {
+  background: #fff5f3;
+  border-color: #efc8c1;
+  color: #8f2f25;
+}
+
+.button.fullWidth {
+  width: 100%;
+}
+
+.iconButtonGroup {
+  display: inline-flex;
+  gap: 8px;
+}
+
+.iconButton {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+}
+
+.textLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.dashboardHeader,
+.tripHero {
+  justify-content: space-between;
+  gap: 20px;
+  padding: 4px 0 22px;
+}
+
+.dashboardHeader h1,
+.tripHero h1,
+.authPanel h1,
+.emptyState h1 {
+  margin: 0;
+  font-size: clamp(32px, 5vw, 58px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.dashboardHeader h1,
+.tripHero h1 {
+  max-width: 780px;
+}
+
+.headerActions {
+  justify-content: flex-end;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.muted {
+  color: var(--muted);
+}
+
+.dashboardHeader .muted,
+.tripHero .muted,
+.emptyState .muted {
+  max-width: 640px;
+  margin: 10px 0 0;
+}
+
+.dashboardGrid,
+.detailGrid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 400px);
+  gap: 20px;
+  align-items: start;
+}
+
+.calendarSurface,
+.sidePanel,
+.detailMain,
+.authPanel,
+.emptyState {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.calendarSurface {
+  padding: 18px;
+}
+
+.calendarHeader {
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.calendarHeader h2,
+.panelTitle h2,
+.sectionBlock h2,
+.historyCard h2 {
+  margin: 0;
+  letter-spacing: 0;
+}
+
+.calendarHeader h2 {
+  font-size: 26px;
+}
+
+.calendarGrid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.calendarWeekdays {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.calendarWeekdays div {
+  padding: 0 4px;
+}
+
+.calendarDay {
+  min-height: 136px;
+  padding: 8px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--surface);
+  overflow: hidden;
+}
+
+.calendarDayBlank {
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.35);
+}
+
+.calendarToday {
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.calendarDate {
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  margin-bottom: 6px;
+  border-radius: 50%;
+  font-weight: 800;
+}
+
+.calendarToday .calendarDate {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+.calendarTripStack,
+.tripList,
+.formStack,
+.sidePanel,
+.detailMain,
+.historyGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.calendarTrip {
+  display: grid;
+  gap: 6px;
+  min-height: 58px;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.calendarTrip span:first-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendarTrip-approved {
+  background: #e4f2eb;
+  border-color: #b7d9c7;
+}
+
+.calendarTrip-pending_approval {
+  background: #fff4db;
+  border-color: #eed29a;
+}
+
+.calendarTrip-change_requested {
+  background: #e8eefb;
+  border-color: #c9d6f3;
+}
+
+.calendarTrip-completed {
+  background: #eef0f3;
+  border-color: #d6dbe3;
+}
+
+.statusBadge {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.statusApproved {
+  background: #dff1e8;
+  color: #1f6848;
+}
+
+.statusPending {
+  background: #fff0cb;
+  color: var(--amber);
+}
+
+.statusChanges {
+  background: #dfe8fb;
+  color: var(--blue);
+}
+
+.statusCompleted {
+  background: #eceff3;
+  color: #4a5566;
+}
+
+.statusMuted {
+  background: #f5e3e1;
+  color: var(--coral);
+}
+
+.sidePanel {
+  padding: 16px;
+}
+
+.panelBlock,
+.sectionBlock {
+  display: grid;
+  gap: 14px;
+}
+
+.panelBlock + .panelBlock {
+  padding-top: 16px;
+  border-top: 1px solid var(--line);
+}
+
+.panelTitle {
+  gap: 8px;
+}
+
+.panelTitle h2 {
+  font-size: 18px;
+}
+
+.formGrid {
+  display: grid;
+  gap: 10px;
+}
+
+.formGrid.two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+label {
+  display: grid;
+  gap: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+input,
+textarea,
+select {
+  width: 100%;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+  color: var(--ink);
+  padding: 11px 12px;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus,
+.iconButton:focus-visible,
+.button:focus-visible,
+.iconTextButton:focus-visible,
+.textLink:focus-visible,
+.segmented a:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(18, 61, 54, 0.15);
+}
+
+.tripListItem {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+}
+
+.tripListItem div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tripListItem span:not(.statusBadge) {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.segmented {
+  display: inline-flex;
+  gap: 6px;
+  padding: 4px;
+  border-radius: var(--radius);
+  background: var(--surface-alt);
+}
+
+.segmented a {
+  padding: 8px 10px;
+  font-weight: 750;
+}
+
+.segmented a.active {
+  background: var(--accent);
+  color: #ffffff;
+  border-color: var(--accent);
+}
+
+.authPanel,
+.emptyState {
+  width: min(640px, 100%);
+  padding: 24px;
+}
+
+.emptyState {
+  display: grid;
+  grid-template-columns: 1fr minmax(280px, 380px);
+  gap: 28px;
+  width: 100%;
+  align-items: start;
+}
+
+.narrowForm {
+  max-width: 420px;
+}
+
+.notice,
+.messageBand {
+  padding: 12px 14px;
+  border-radius: var(--radius);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+
+.codeBlock {
+  white-space: pre-wrap;
+  padding: 14px;
+  overflow: auto;
+  border-radius: var(--radius);
+  background: #111c19;
+  color: #e9fff5;
+}
+
+.detailNav {
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+
+.detailMain {
+  padding: 18px;
+}
+
+.infoGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.infoItem {
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+}
+
+.infoItem.wide {
+  grid-column: 1 / -1;
+}
+
+.infoItem span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.infoItem strong {
+  white-space: pre-wrap;
+}
+
+.messageBand p {
+  margin: 6px 0 0;
+}
+
+.changeRequest {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+}
+
+.changeRequest span,
+.changeRequest p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.buttonRow {
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.photoGrid,
+.historyGrid {
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.photoGrid {
+  display: grid;
+  gap: 12px;
+}
+
+.photoGrid figure,
+.historyCard {
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.photoGrid img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+}
+
+.photoGrid figcaption {
+  padding: 10px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.historyCard {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+}
+
+.historyCard h2 {
+  font-size: 20px;
+}
+
+.historyCard p {
+  margin: 4px 0 0;
+  color: var(--muted);
+}
+
+.rating {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--amber);
+  font-weight: 800;
+}
+
+@media (max-width: 1040px) {
+  .dashboardGrid,
+  .detailGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .sidePanel {
+    order: -1;
+  }
+}
+
+@media (max-width: 720px) {
+  .appShell {
+    padding: 14px;
+  }
+
+  .topBar,
+  .dashboardHeader,
+  .tripHero,
+  .emptyState {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .dashboardHeader,
+  .tripHero,
+  .emptyState {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .iconTextButton span {
+    max-width: 180px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .calendarSurface {
+    padding: 12px;
+  }
+
+  .calendarGrid {
+    gap: 5px;
+  }
+
+  .calendarWeekdays {
+    font-size: 11px;
+  }
+
+  .calendarDay {
+    min-height: 104px;
+    padding: 5px;
+  }
+
+  .calendarTrip {
+    min-height: 48px;
+    padding: 6px;
+  }
+
+  .calendarTrip .statusBadge {
+    display: none;
+  }
+
+  .formGrid.two,
+  .infoGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboardHeader h1,
+  .tripHero h1,
+  .authPanel h1,
+  .emptyState h1 {
+    font-size: 36px;
+  }
+}
+
+@media (max-width: 460px) {
+  .calendarWeekdays {
+    display: none;
+  }
+
+  .calendarGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .calendarDayBlank {
+    display: none;
+  }
+
+  .calendarDay {
+    min-height: auto;
+  }
+}
