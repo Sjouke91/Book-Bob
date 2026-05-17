@@ -1,18 +1,8 @@
 import Link from "next/link";
-import {
-  CalendarDays,
-  CheckCircle2,
-  History,
-  LogOut,
-  Plus,
-  Van
-} from "lucide-react";
+import { LogOut, Plus, Settings, Van } from "lucide-react";
 
-import {
-  createCamper,
-  createTrip,
-  signOut
-} from "@/app/actions";
+import { createCamper, createTrip, signOut } from "@/app/actions";
+import { MobileTabLayout } from "@/components/MobileTabLayout";
 import { CalendarMonth } from "@/components/CalendarMonth";
 import { SetupInstructions } from "@/components/SetupInstructions";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -38,16 +28,18 @@ export default async function Home({ searchParams }: HomeProps) {
   const { supabase, user } = await requireUser();
   const campers = await getCampers(supabase);
 
+  const firstName = user.name.split(/[\s@]/)[0];
+  const isWelcome = params?.welcome === "1";
+
   if (campers.length === 0) {
     return (
       <main className="appShell">
-        <TopBar userEmail={user.email} />
+        <TopBar userName={user.name} />
         <section className="emptyState">
           <div>
-            <p className="eyebrow">First camper</p>
             <h1>Add your camper</h1>
             <p className="muted">
-              Create the shared calendar and invite your friend by email.
+              Create the shared calendar and invite your co-owner by email.
             </p>
           </div>
           <form action={createCamper} className="formStack narrowForm">
@@ -76,128 +68,176 @@ export default async function Home({ searchParams }: HomeProps) {
   const selectedCamperId =
     typeof params?.camper === "string" ? params.camper : campers[0].id;
   const selectedCamper =
-    campers.find((camper) => camper.id === selectedCamperId) ?? campers[0];
+    campers.find((c) => c.id === selectedCamperId) ?? campers[0];
   const month = parseMonthParam(
     typeof params?.month === "string" ? params.month : undefined
   );
   const window = monthWindow(month);
+  const today = new Date().toISOString().slice(0, 10);
 
-  const { data: monthTrips, error: tripsError } = await supabase
-    .from("trips")
-    .select("*")
-    .eq("camper_id", selectedCamper.id)
-    .not("status", "in", "(rejected,cancelled)")
-    .lte("start_date", window.end)
-    .gte("end_date", window.start)
-    .order("start_date", { ascending: true });
+  const [
+    { data: monthTripsRaw },
+    { data: upcomingRaw },
+    { data: pastRaw },
+    { data: membersRaw }
+  ] = await Promise.all([
+    supabase
+      .from("trips")
+      .select("*")
+      .eq("camper_id", selectedCamper.id)
+      .not("status", "in", "(rejected,cancelled)")
+      .lte("start_date", window.end)
+      .gte("end_date", window.start)
+      .order("start_date", { ascending: true }),
+    supabase
+      .from("trips")
+      .select("*")
+      .eq("camper_id", selectedCamper.id)
+      .not("status", "in", "(rejected,cancelled,completed)")
+      .gte("end_date", today)
+      .order("start_date", { ascending: true }),
+    supabase
+      .from("trips")
+      .select("*")
+      .eq("camper_id", selectedCamper.id)
+      .eq("status", "completed")
+      .order("end_date", { ascending: false })
+      .limit(20),
+    supabase
+      .from("camper_members")
+      .select("user_id, profiles(full_name, email)")
+      .eq("camper_id", selectedCamper.id),
+  ]);
 
-  if (tripsError) {
-    throw new Error(tripsError.message);
-  }
+  const trips = (monthTripsRaw ?? []) as Trip[];
+  const upcomingTrips = (upcomingRaw ?? []) as Trip[];
+  const pastTrips = (pastRaw ?? []) as Trip[];
 
-  const { data: upcoming, error: upcomingError } = await supabase
-    .from("trips")
-    .select("*")
-    .eq("camper_id", selectedCamper.id)
-    .not("status", "in", "(rejected,cancelled,completed)")
-    .gte("end_date", window.start)
-    .order("start_date", { ascending: true })
-    .limit(8);
+  // Build userId → first name map, handling Supabase returning profiles as array or object
+  const bookerNames: Record<string, string> = {};
+  (membersRaw ?? []).forEach((m) => {
+    const row = m as { user_id: string; profiles: unknown };
+    const raw = row.profiles;
+    const profile = (Array.isArray(raw) ? raw[0] : raw) as
+      | { full_name?: string | null; email?: string }
+      | null;
+    if (profile && row.user_id) {
+      const name = profile.full_name ?? profile.email ?? "";
+      bookerNames[row.user_id] = name.split(/[\s@]/)[0];
+    }
+  });
 
-  if (upcomingError) {
-    throw new Error(upcomingError.message);
-  }
-
-  const trips = (monthTrips ?? []) as Trip[];
-  const upcomingTrips = (upcoming ?? []) as Trip[];
+  const camperSelector =
+    campers.length > 1 ? (
+      <div className="camperSelector">
+        <div className="segmented">
+          {campers.map((camper) => (
+            <Link
+              key={camper.id}
+              className={camper.id === selectedCamper.id ? "active" : ""}
+              href={`/?camper=${camper.id}`}
+            >
+              {camper.name}
+            </Link>
+          ))}
+        </div>
+      </div>
+    ) : null;
 
   return (
     <main className="appShell">
-      <TopBar userEmail={user.email} />
+      <TopBar userName={user.name} />
 
-      <section className="dashboardHeader">
-        <div>
-          <p className="eyebrow">Shared camper</p>
-          <h1>{selectedCamper.name}</h1>
-          {selectedCamper.description ? (
-            <p className="muted">{selectedCamper.description}</p>
-          ) : null}
+      {isWelcome ? (
+        <div className="welcomeBanner">
+          Welcome {firstName}, ready for your next booking?
         </div>
-        <div className="headerActions">
-          <Link className="button secondary" href="/history">
-            <History size={18} aria-hidden />
-            Trip history
-          </Link>
-          {campers.length > 1 ? (
-            <div className="segmented">
-              {campers.map((camper) => (
-                <Link
-                  key={camper.id}
-                  className={camper.id === selectedCamper.id ? "active" : ""}
-                  href={`/?camper=${camper.id}`}
-                >
-                  {camper.name}
-                </Link>
-              ))}
-            </div>
-          ) : null}
-        </div>
-      </section>
+      ) : null}
 
-      <div className="dashboardGrid">
-        <CalendarMonth
-          month={month}
-          trips={trips}
-          camperId={selectedCamper.id}
-        />
-
-        <aside className="sidePanel">
-          <section className="panelBlock">
-            <div className="panelTitle">
-              <CalendarDays size={18} aria-hidden />
-              <h2>Request trip</h2>
-            </div>
+      <MobileTabLayout
+        camperSelector={camperSelector}
+        calendarContent={
+          <CalendarMonth
+            month={month}
+            trips={trips}
+            camperId={selectedCamper.id}
+          />
+        }
+        bookContent={
+          <div className="bookPanel">
+            <h2 className="bookPanelTitle">Request a trip</h2>
             <TripForm
               action={createTrip}
               camperId={selectedCamper.id}
-              submitLabel="Send for approval"
+              submitLabel="Request dates"
             />
-          </section>
-
-          <section className="panelBlock">
-            <div className="panelTitle">
-              <CheckCircle2 size={18} aria-hidden />
-              <h2>Upcoming</h2>
-            </div>
-            <div className="tripList">
+          </div>
+        }
+        tripsContent={
+          <div className="tripsView">
+            <div className="tripsSection">
+              <p className="tripsSectionLabel">Upcoming</p>
               {upcomingTrips.length ? (
                 upcomingTrips.map((trip) => (
                   <Link
-                    href={`/trips/${trip.id}`}
-                    className="tripListItem"
                     key={trip.id}
+                    href={`/trips/${trip.id}`}
+                    className="tripCard"
                   >
-                    <div>
+                    <div className="tripCardInfo">
                       <strong>{trip.destination}</strong>
                       <span>
                         {dateRangeLabel(trip.start_date, trip.end_date)}
+                      </span>
+                      <span className="tripBookerTag">
+                        {trip.requested_by === user.id
+                          ? "You"
+                          : (bookerNames[trip.requested_by] ?? "Partner")}
                       </span>
                     </div>
                     <StatusBadge status={trip.status} />
                   </Link>
                 ))
               ) : (
-                <p className="muted">No upcoming trips.</p>
+                <p className="muted">
+                  No upcoming trips — request one from the Book tab.
+                </p>
               )}
             </div>
-          </section>
-        </aside>
-      </div>
+
+            {pastTrips.length > 0 ? (
+              <div className="tripsSection">
+                <p className="tripsSectionLabel">Past trips</p>
+                {pastTrips.map((trip) => (
+                  <Link
+                    key={trip.id}
+                    href={`/trips/${trip.id}`}
+                    className="tripCard"
+                  >
+                    <div className="tripCardInfo">
+                      <strong>{trip.destination}</strong>
+                      <span>
+                        {dateRangeLabel(trip.start_date, trip.end_date)}
+                      </span>
+                      <span className="tripBookerTag">
+                        {trip.requested_by === user.id
+                          ? "You"
+                          : (bookerNames[trip.requested_by] ?? "Partner")}
+                      </span>
+                    </div>
+                    <StatusBadge status={trip.status} />
+                  </Link>
+                ))}
+              </div>
+            ) : null}
+          </div>
+        }
+      />
     </main>
   );
 }
 
-function TopBar({ userEmail }: { userEmail: string }) {
+function TopBar({ userName }: { userName: string }) {
   return (
     <header className="topBar">
       <Link className="brand" href="/">
@@ -206,12 +246,26 @@ function TopBar({ userEmail }: { userEmail: string }) {
         </span>
         <span>Book Bob</span>
       </Link>
-      <form action={signOut}>
-        <button className="iconTextButton" type="submit">
-          <span>{userEmail}</span>
-          <LogOut size={17} aria-hidden />
-        </button>
-      </form>
+      <div className="topBarActions">
+        <Link
+          className="iconButton"
+          href="/settings"
+          title="Settings"
+          aria-label="Settings"
+        >
+          <Settings size={17} aria-hidden />
+        </Link>
+        <form action={signOut}>
+          <button
+            className="iconButton"
+            type="submit"
+            title={`Sign out (${userName})`}
+            aria-label="Sign out"
+          >
+            <LogOut size={17} aria-hidden />
+          </button>
+        </form>
+      </div>
     </header>
   );
 }

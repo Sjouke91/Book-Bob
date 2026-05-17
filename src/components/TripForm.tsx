@@ -2,6 +2,7 @@ import { CalendarPlus, Send } from "lucide-react";
 
 import { toInputTime, todayIso } from "@/lib/dates";
 import { DateRangeFields } from "@/components/DateRangeFields";
+import { OptionalTimeFields } from "@/components/OptionalTimeFields";
 import type { Trip } from "@/lib/types";
 
 type TripFormProps = {
@@ -30,24 +31,10 @@ export function TripForm({
         minStartDate={mode === "create" ? todayIso() : undefined}
       />
 
-      <div className="formGrid two">
-        <label>
-          <span>Pickup time</span>
-          <input
-            type="time"
-            name="pickup_time"
-            defaultValue={toInputTime(trip?.pickup_time ?? null)}
-          />
-        </label>
-        <label>
-          <span>Return time</span>
-          <input
-            type="time"
-            name="return_time"
-            defaultValue={toInputTime(trip?.return_time ?? null)}
-          />
-        </label>
-      </div>
+      <OptionalTimeFields
+        defaultPickupTime={toInputTime(trip?.pickup_time ?? null)}
+        defaultReturnTime={toInputTime(trip?.return_time ?? null)}
+      />
 
       <label>
         <span>Destination</span>

@@ -1,4 +1,4 @@
-import { Resend } from "resend";
+import nodemailer from "nodemailer";
 
 type SendEmailArgs = {
   to: string[];
@@ -12,23 +12,36 @@ export async function sendEmail({ to, subject, html, text }: SendEmailArgs) {
     new Set(to.map((email) => email.trim().toLowerCase()).filter(Boolean))
   );
 
-  if (recipients.length === 0) {
+  if (recipients.length === 0) return;
+
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+
+  if (!user || !pass) {
+    console.info("[email skipped — set GMAIL_USER + GMAIL_APP_PASSWORD to enable]", {
+      to: recipients,
+      subject,
+      text
+    });
     return;
   }
 
-  if (!process.env.RESEND_API_KEY) {
-    console.info("[email skipped]", { to: recipients, subject, text });
-    return;
-  }
+  const transporter = nodemailer.createTransport({
+    host: "smtp.gmail.com",
+    port: 465,
+    secure: true,
+    auth: {
+      user,
+      pass: pass.replace(/\s/g, "") // strip spaces — app passwords are valid with or without
+    }
+  });
 
-  const resend = new Resend(process.env.RESEND_API_KEY);
-
-  await resend.emails.send({
-    from: process.env.APP_EMAIL_FROM ?? "Book Bob <onboarding@resend.dev>",
+  await transporter.sendMail({
+    from: `Book Bob <${user}>`,
     to: recipients,
     subject,
-    html,
-    text
+    text,
+    html
   });
 }
 

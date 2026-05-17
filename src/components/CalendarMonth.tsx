@@ -3,7 +3,7 @@ import { format, isSameDay } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { calendarDays, monthNav, tripTouchesDate } from "@/lib/dates";
-import { StatusBadge } from "@/components/StatusBadge";
+import { SelectableCalendarDay } from "@/components/SelectableCalendarDay";
 import type { Trip } from "@/lib/types";
 
 type CalendarMonthProps = {
@@ -60,26 +60,14 @@ export function CalendarMonth({ month, trips, camperId }: CalendarMonthProps) {
           const isoDate = format(day, "yyyy-MM-dd");
 
           return (
-            <div
+            <SelectableCalendarDay
               key={isoDate}
-              className={`calendarDay ${
-                isSameDay(day, today) ? "calendarToday" : ""
-              }`}
-            >
-              <div className="calendarDate">{format(day, "d")}</div>
-              <div className="calendarTripStack">
-                {dayTrips.map((trip) => (
-                  <Link
-                    key={trip.id}
-                    className={`calendarTrip calendarTrip-${trip.status}`}
-                    href={`/trips/${trip.id}`}
-                  >
-                    <span>{trip.destination}</span>
-                    <StatusBadge status={trip.status} />
-                  </Link>
-                ))}
-              </div>
-            </div>
+              dayLabel={format(day, "d MMMM yyyy")}
+              dayNumber={format(day, "d")}
+              isToday={isSameDay(day, today)}
+              isoDate={isoDate}
+              trips={dayTrips}
+            />
           );
         })}
       </div>

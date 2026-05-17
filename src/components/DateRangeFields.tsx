@@ -2,6 +2,8 @@
 
 import { useMemo, useState } from "react";
 
+import { useBookingDateSelectionOptional } from "@/components/BookingDateSelection";
+
 type DateRangeFieldsProps = {
   defaultStartDate?: string;
   defaultEndDate?: string;
@@ -39,9 +41,41 @@ export function DateRangeFields({
     () => normalizeEndDate(defaultStartDate, defaultEndDate),
     [defaultStartDate, defaultEndDate]
   );
+  const sharedSelection = useBookingDateSelectionOptional();
   const [startDate, setStartDate] = useState(defaultStartDate ?? "");
   const [endDate, setEndDate] = useState(initialEndDate);
-  const minReturnDate = startDate ? addDaysIso(startDate, 1) : minStartDate;
+  const displayedStartDate = sharedSelection?.startDate ?? startDate;
+  const displayedEndDate = sharedSelection?.endDate ?? endDate;
+  const minReturnDate = displayedStartDate
+    ? addDaysIso(displayedStartDate, 1)
+    : minStartDate;
+
+  function updateStartDate(nextStartDate: string) {
+    const nextEndDate = normalizeEndDate(nextStartDate, displayedEndDate);
+
+    if (sharedSelection) {
+      sharedSelection.setDateRange({
+        startDate: nextStartDate,
+        endDate: nextEndDate
+      });
+      return;
+    }
+
+    setStartDate(nextStartDate);
+    setEndDate(nextEndDate);
+  }
+
+  function updateEndDate(nextEndDate: string) {
+    if (sharedSelection) {
+      sharedSelection.setDateRange({
+        startDate: displayedStartDate,
+        endDate: nextEndDate
+      });
+      return;
+    }
+
+    setEndDate(nextEndDate);
+  }
 
   return (
     <div className="formGrid two">
@@ -52,14 +86,8 @@ export function DateRangeFields({
           type="date"
           name="start_date"
           min={minStartDate}
-          value={startDate}
-          onChange={(event) => {
-            const nextStartDate = event.target.value;
-            setStartDate(nextStartDate);
-            setEndDate((currentEndDate) =>
-              normalizeEndDate(nextStartDate, currentEndDate)
-            );
-          }}
+          value={displayedStartDate}
+          onChange={(event) => updateStartDate(event.target.value)}
         />
       </label>
       <label>
@@ -69,8 +97,8 @@ export function DateRangeFields({
           type="date"
           name="end_date"
           min={minReturnDate}
-          value={endDate}
-          onChange={(event) => setEndDate(event.target.value)}
+          value={displayedEndDate}
+          onChange={(event) => updateEndDate(event.target.value)}
         />
       </label>
     </div>

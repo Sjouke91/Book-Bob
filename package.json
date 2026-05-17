@@ -12,9 +12,11 @@
   "dependencies": {
     "@supabase/ssr": "latest",
     "@supabase/supabase-js": "latest",
+    "@types/nodemailer": "^8.0.0",
     "date-fns": "latest",
     "lucide-react": "latest",
     "next": "latest",
+    "nodemailer": "^8.0.7",
     "react": "latest",
     "react-dom": "latest",
     "resend": "latest"

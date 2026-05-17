@@ -107,7 +107,8 @@ pre {
 .iconTextButton,
 .button,
 .iconButton,
-.segmented a {
+.segmented a,
+.segmented button {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   background: var(--surface);
@@ -161,6 +162,11 @@ pre {
   height: 38px;
   display: grid;
   place-items: center;
+}
+
+.iconButton.small {
+  width: 32px;
+  height: 32px;
 }
 
 .textLink {
@@ -291,9 +297,23 @@ pre {
   background: rgba(255, 255, 255, 0.35);
 }
 
-.calendarToday {
+.calendarDayInteractive {
+  cursor: pointer;
+}
+
+.calendarDayInteractive:hover {
   border-color: var(--accent);
-  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.calendarDayInteractive:focus-visible {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(18, 61, 54, 0.15);
+  outline: none;
+}
+
+.calendarToday {
+  border-color: rgba(46, 94, 170, 0.25);
+  background: rgba(46, 94, 170, 0.04);
 }
 
 .calendarDate {
@@ -307,8 +327,30 @@ pre {
 }
 
 .calendarToday .calendarDate {
+  background: var(--blue);
+  color: #ffffff;
+}
+
+.calendarSelectionRange {
+  background: #eef8f3;
+  border-color: #a9d7c2;
+}
+
+.calendarSelectionStart,
+.calendarSelectionEnd {
+  background: #e1f0ea;
+  border-color: var(--accent);
+  box-shadow: inset 0 0 0 1px var(--accent);
+}
+
+.calendarSelectionStart .calendarDate,
+.calendarSelectionEnd .calendarDate {
   background: var(--accent);
   color: #ffffff;
+}
+
+.calendarSelectionSingle {
+  background: #eaf5f1;
 }
 
 .calendarTripStack,
@@ -451,6 +493,32 @@ textarea {
   resize: vertical;
 }
 
+.optionalTimeGroup {
+  display: grid;
+  gap: 8px;
+}
+
+.checkboxLabel {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.checkboxLabel input {
+  width: 15px;
+  height: 15px;
+  padding: 0;
+  accent-color: var(--accent);
+}
+
+.compactFields {
+  padding-left: 23px;
+}
+
 input:focus,
 textarea:focus,
 select:focus,
@@ -493,15 +561,26 @@ select:focus,
   background: var(--surface-alt);
 }
 
-.segmented a {
+.segmented a,
+.segmented button {
   padding: 8px 10px;
   font-weight: 750;
 }
 
-.segmented a.active {
+.segmented a.active,
+.segmented button.active {
   background: var(--accent);
   color: #ffffff;
   border-color: var(--accent);
+}
+
+.approvalSegmented {
+  width: 100%;
+}
+
+.approvalSegmented button {
+  flex: 1;
+  justify-content: center;
 }
 
 .authPanel,
@@ -661,10 +740,6 @@ select:focus,
   .detailGrid {
     grid-template-columns: 1fr;
   }
-
-  .sidePanel {
-    order: -1;
-  }
 }
 
 @media (max-width: 720px) {
@@ -672,7 +747,10 @@ select:focus,
     padding: 14px;
   }
 
-  .topBar,
+  .topBar {
+    margin-bottom: 16px;
+  }
+
   .dashboardHeader,
   .tripHero,
   .emptyState {
@@ -735,18 +813,334 @@ select:focus,
 
 @media (max-width: 460px) {
   .calendarWeekdays {
-    display: none;
+    font-size: 10px;
   }
 
   .calendarGrid {
-    grid-template-columns: 1fr;
-  }
-
-  .calendarDayBlank {
-    display: none;
+    gap: 3px;
   }
 
   .calendarDay {
-    min-height: auto;
+    min-height: 54px;
+    padding: 4px;
   }
+
+  .calendarDate {
+    width: 22px;
+    height: 22px;
+    margin-bottom: 3px;
+    font-size: 12px;
+  }
+
+  .calendarTrip {
+    min-height: 6px;
+    padding: 0;
+    border-radius: 3px;
+  }
+
+  .calendarTrip > * {
+    display: none;
+  }
+}
+
+/* ── Tab pill navigation ── */
+.tabPill {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  background: var(--surface-alt);
+  border-radius: 999px;
+  margin: 0 auto 24px;
+  width: fit-content;
+  max-width: 100%;
+}
+
+.tabPillItem {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  background: transparent;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--muted);
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.tabPillItem.active {
+  background: var(--accent);
+  color: #ffffff;
+}
+
+@media (max-width: 480px) {
+  .tabPill {
+    width: 100%;
+  }
+
+  .tabPillItem {
+    flex: 1;
+    justify-content: center;
+    padding: 8px 10px;
+    font-size: 13px;
+    gap: 4px;
+  }
+}
+
+/* Hidden tab content */
+.tabContentHidden {
+  display: none;
+}
+
+/* ── Welcome banner ── */
+.welcomeBanner {
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-radius: var(--radius);
+  font-weight: 700;
+}
+
+/* ── Book panel ── */
+.bookPanel {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+}
+
+.bookPanelTitle {
+  margin: 0 0 16px;
+  font-size: 20px;
+  letter-spacing: 0;
+}
+
+/* ── Trips view ── */
+.tripsView {
+  display: grid;
+  gap: 24px;
+}
+
+.tripsSection {
+  display: grid;
+  gap: 10px;
+}
+
+.tripsSection + .tripsSection {
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.tripsSectionLabel {
+  margin: 0;
+  font-size: 12px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* ── Trip card ── */
+.tripCard {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: 0 2px 8px rgba(18, 61, 54, 0.05);
+}
+
+.tripCardInfo {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.tripCardInfo strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tripCardInfo span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.tripBookerTag {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+/* ── Book CTA (below calendar, right-aligned) ── */
+.bookCTA {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 12px;
+}
+
+.bookCTAButton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 20px;
+  border-radius: 999px;
+  border: none;
+  background: var(--accent);
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* ── Camper selector ── */
+.camperSelector {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+/* ── Top bar actions group ── */
+.topBarActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ── Trip info grid (detail page) ── */
+.tripInfoList {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.tripInfoItem {
+  display: grid;
+  gap: 4px;
+}
+
+.tripInfoItem.wide {
+  grid-column: 1 / -1;
+}
+
+.tripInfoLabel {
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+.tripInfoValue {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* ── Settings page ── */
+.settingsSectionTitle {
+  margin: 0;
+  font-size: 16px;
+  letter-spacing: 0;
+}
+
+.recipientList {
+  display: grid;
+  gap: 8px;
+}
+
+.recipientRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 12px;
+  background: var(--surface-alt);
+  border-radius: var(--radius);
+}
+
+.recipientInfo {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.recipientInfo strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+}
+
+.recipientEmail {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.recipientTag {
+  flex-shrink: 0;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.iconButton--small {
+  width: 30px;
+  height: 30px;
+}
+
+.recipientAddForm {
+  display: flex;
+  gap: 8px;
+}
+
+.recipientAddForm input {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Trip detail page ── */
+.tripDetailStack {
+  display: grid;
+  gap: 12px;
+  padding-bottom: 32px;
+}
+
+.detailCard {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 18px;
+  display: grid;
+  gap: 14px;
+}
+
+.togglePanel {
+  display: grid;
+}
+
+.toggleTrigger {
+  justify-content: space-between;
+}
+
+.toggleTriggerLabel {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.togglePanelBody {
+  padding-top: 12px;
 }
