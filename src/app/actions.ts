@@ -72,7 +72,7 @@ export async function signInWithEmail(formData: FormData) {
   const email = normalizeEmail(formData.get('email'));
 
   if (!email) {
-    throw new Error('Email is required.');
+    redirect('/login?error=Email+is+required');
   }
 
   const supabase = await createClient();
@@ -85,7 +85,7 @@ export async function signInWithEmail(formData: FormData) {
   });
 
   if (error) {
-    throw new Error(error.message);
+    redirect(`/login?error=${encodeURIComponent(error.message)}`);
   }
 
   redirect('/login?sent=1');

@@ -26,6 +26,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
   const params = await searchParams;
   const sent = params?.sent === "1";
+  const error = typeof params?.error === "string" ? params.error : null;
 
   return (
     <main className="centeredShell">
@@ -50,6 +51,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         </form>
         {sent ? (
           <p className="notice">Check your inbox for the sign-in link.</p>
+        ) : null}
+        {error ? (
+          <p className="notice error">{error}</p>
         ) : null}
         <Link className="textLink" href="/">
           Back to calendar
