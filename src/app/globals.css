@@ -732,6 +732,16 @@ select:focus,
   color: var(--muted);
 }
 
+.historyCardContent {
+  display: grid;
+  gap: 12px;
+}
+
+.historyCardActions {
+  display: flex;
+  justify-content: flex-end;
+}
+
 .rating {
   display: inline-flex;
   align-items: center;
@@ -959,6 +969,15 @@ select:focus,
   border: 1px solid var(--line);
   border-radius: var(--radius);
   box-shadow: 0 2px 8px rgba(18, 61, 54, 0.05);
+}
+
+.tripCardLink {
+  flex: 1;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
 
 .tripCardInfo {

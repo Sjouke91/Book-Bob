@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { LogOut, Plus, Settings, Van } from "lucide-react";
+import { LogOut, Plus, Settings, Trash2, Van } from "lucide-react";
 
-import { createCamper, createTrip, signOut } from "@/app/actions";
+import { createCamper, createTrip, deleteTrip, signOut } from "@/app/actions";
 import { MobileTabLayout } from "@/components/MobileTabLayout";
 import { CalendarMonth } from "@/components/CalendarMonth";
 import { SetupInstructions } from "@/components/SetupInstructions";
@@ -179,24 +179,28 @@ export default async function Home({ searchParams }: HomeProps) {
               <p className="tripsSectionLabel">Upcoming</p>
               {upcomingTrips.length ? (
                 upcomingTrips.map((trip) => (
-                  <Link
-                    key={trip.id}
-                    href={`/trips/${trip.id}`}
-                    className="tripCard"
-                  >
-                    <div className="tripCardInfo">
-                      <strong>{trip.destination}</strong>
-                      <span>
-                        {dateRangeLabel(trip.start_date, trip.end_date)}
-                      </span>
-                      <span className="tripBookerTag">
-                        {trip.requested_by === user.id
-                          ? "You"
-                          : (bookerNames[trip.requested_by] ?? "Partner")}
-                      </span>
-                    </div>
-                    <StatusBadge status={trip.status} />
-                  </Link>
+                  <div key={trip.id} className="tripCard">
+                    <Link href={`/trips/${trip.id}`} className="tripCardLink">
+                      <div className="tripCardInfo">
+                        <strong>{trip.destination}</strong>
+                        <span>
+                          {dateRangeLabel(trip.start_date, trip.end_date)}
+                        </span>
+                        <span className="tripBookerTag">
+                          {trip.requested_by === user.id
+                            ? "You"
+                            : (bookerNames[trip.requested_by] ?? "Partner")}
+                        </span>
+                      </div>
+                      <StatusBadge status={trip.status} />
+                    </Link>
+                    <form action={deleteTrip}>
+                      <input type="hidden" name="trip_id" value={trip.id} />
+                      <button className="iconButton" type="submit" title="Delete trip" aria-label="Delete trip">
+                        <Trash2 size={16} aria-hidden />
+                      </button>
+                    </form>
+                  </div>
                 ))
               ) : (
                 <p className="muted">
@@ -209,24 +213,28 @@ export default async function Home({ searchParams }: HomeProps) {
               <div className="tripsSection">
                 <p className="tripsSectionLabel">Past trips</p>
                 {pastTrips.map((trip) => (
-                  <Link
-                    key={trip.id}
-                    href={`/trips/${trip.id}`}
-                    className="tripCard"
-                  >
-                    <div className="tripCardInfo">
-                      <strong>{trip.destination}</strong>
-                      <span>
-                        {dateRangeLabel(trip.start_date, trip.end_date)}
-                      </span>
-                      <span className="tripBookerTag">
-                        {trip.requested_by === user.id
-                          ? "You"
-                          : (bookerNames[trip.requested_by] ?? "Partner")}
-                      </span>
-                    </div>
-                    <StatusBadge status={trip.status} />
-                  </Link>
+                  <div key={trip.id} className="tripCard">
+                    <Link href={`/trips/${trip.id}`} className="tripCardLink">
+                      <div className="tripCardInfo">
+                        <strong>{trip.destination}</strong>
+                        <span>
+                          {dateRangeLabel(trip.start_date, trip.end_date)}
+                        </span>
+                        <span className="tripBookerTag">
+                          {trip.requested_by === user.id
+                            ? "You"
+                            : (bookerNames[trip.requested_by] ?? "Partner")}
+                        </span>
+                      </div>
+                      <StatusBadge status={trip.status} />
+                    </Link>
+                    <form action={deleteTrip}>
+                      <input type="hidden" name="trip_id" value={trip.id} />
+                      <button className="iconButton" type="submit" title="Delete trip" aria-label="Delete trip">
+                        <Trash2 size={16} aria-hidden />
+                      </button>
+                    </form>
+                  </div>
                 ))}
               </div>
             ) : null}

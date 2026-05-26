@@ -14,6 +14,34 @@ type ClaimsResponse = {
 };
 
 export async function getCurrentUserOrNull() {
+  // Dev bypass: auto-login on localhost using GMAIL_USER as the identity
+  if (
+    process.env.NODE_ENV === "development" &&
+    process.env.GMAIL_USER &&
+    process.env.SUPABASE_SECRET_KEY
+  ) {
+    const { createAdminClient } = await import("@/lib/supabase/admin");
+    const adminClient = createAdminClient();
+    const { data: profile } = await adminClient
+      .from("profiles")
+      .select("id, email, full_name")
+      .eq("email", process.env.GMAIL_USER.toLowerCase())
+      .single();
+
+    if (profile) {
+      return {
+        supabase: adminClient,
+        user: {
+          id: profile.id as string,
+          email: profile.email as string,
+          name:
+            (profile.full_name as string | null) ??
+            (profile.email as string).split("@")[0]
+        }
+      };
+    }
+  }
+
   const supabase = await createClient();
   const { data } = await supabase.auth.getClaims();
   const claims = data?.claims;

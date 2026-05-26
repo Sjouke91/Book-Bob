@@ -6,6 +6,7 @@ import {
   ImagePlus,
   Pencil,
   Star,
+  Trash2,
   X
 } from "lucide-react";
 
@@ -14,6 +15,7 @@ import {
 import {
   approveChangeRequest,
   cancelTrip,
+  deleteTrip,
   markTripCompleted,
   proposeTripEdit,
   rejectChangeRequest,
@@ -233,7 +235,7 @@ export default async function TripPage({ params }: TripPageProps) {
           </section>
         ) : null}
 
-        {/* Cancel trip — always last */}
+        {/* Cancel trip */}
         {canCancel ? (
           <TogglePanel
             label="Cancel trip"
@@ -253,6 +255,22 @@ export default async function TripPage({ params }: TripPageProps) {
             </form>
           </TogglePanel>
         ) : null}
+
+        {/* Delete trip — always last */}
+        <TogglePanel
+          label="Delete trip"
+          icon={<Trash2 size={16} aria-hidden />}
+          variant="danger"
+        >
+          <form action={deleteTrip} className="formStack">
+            <input type="hidden" name="trip_id" value={trip.id} />
+            <p className="muted">This permanently removes the trip and cannot be undone.</p>
+            <button className="button danger" type="submit">
+              <Trash2 size={18} aria-hidden />
+              Confirm deletion
+            </button>
+          </form>
+        </TogglePanel>
       </div>
     </main>
   );

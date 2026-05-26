@@ -789,6 +789,27 @@ export async function removeInvite(formData: FormData) {
   redirect('/settings');
 }
 
+export async function deleteTrip(formData: FormData) {
+  const { supabase } = await requireUser();
+  const tripId = requiredString(formData.get('trip_id'), 'Trip');
+
+  // getTripById enforces RLS — throws if trip not found or user lacks access
+  const trip = await getTripById(supabase, tripId);
+
+  const { error } = await supabase
+    .from('trips')
+    .delete()
+    .eq('id', trip.id);
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  revalidatePath('/');
+  revalidatePath('/history');
+  redirect('/');
+}
+
 const SEED_EMAIL = 's.bosma1991@gmail.com';
 
 export async function createSeedTrip(formData: FormData) {
