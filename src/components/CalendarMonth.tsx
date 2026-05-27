@@ -3,7 +3,10 @@ import { format, isSameDay } from "date-fns";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
 import { calendarDays, monthNav, tripTouchesDate } from "@/lib/dates";
-import { SelectableCalendarDay } from "@/components/SelectableCalendarDay";
+import {
+  type CalendarTripItem,
+  SelectableCalendarDay
+} from "@/components/SelectableCalendarDay";
 import type { Trip } from "@/lib/types";
 
 type CalendarMonthProps = {
@@ -13,6 +16,22 @@ type CalendarMonthProps = {
 };
 
 const weekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+function calendarTripItem(trip: Trip, isoDate: string): CalendarTripItem {
+  if (trip.start_date === isoDate && trip.end_date === isoDate) {
+    return { trip, dayRole: "same-day" };
+  }
+
+  if (trip.start_date === isoDate) {
+    return { trip, dayRole: "pickup" };
+  }
+
+  if (trip.end_date === isoDate) {
+    return { trip, dayRole: "return" };
+  }
+
+  return { trip, dayRole: "stay" };
+}
 
 export function CalendarMonth({ month, trips, camperId }: CalendarMonthProps) {
   const { days, leadingBlanks } = calendarDays(month);
@@ -56,8 +75,10 @@ export function CalendarMonth({ month, trips, camperId }: CalendarMonthProps) {
         ))}
 
         {days.map((day) => {
-          const dayTrips = trips.filter((trip) => tripTouchesDate(trip, day));
           const isoDate = format(day, "yyyy-MM-dd");
+          const dayTrips = trips
+            .filter((trip) => tripTouchesDate(trip, day))
+            .map((trip) => calendarTripItem(trip, isoDate));
 
           return (
             <SelectableCalendarDay

@@ -7,12 +7,24 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { useBookingDateSelectionOptional } from "@/components/BookingDateSelection";
 import type { Trip } from "@/lib/types";
 
+export type CalendarTripItem = {
+  trip: Trip;
+  dayRole: "pickup" | "return" | "same-day" | "stay";
+};
+
 type SelectableCalendarDayProps = {
   dayLabel: string;
   dayNumber: string;
   isToday: boolean;
   isoDate: string;
-  trips: Trip[];
+  trips: CalendarTripItem[];
+};
+
+const dayRoleLabels: Record<CalendarTripItem["dayRole"], string> = {
+  pickup: "Pickup",
+  return: "Return",
+  "same-day": "Same day",
+  stay: "On trip"
 };
 
 function selectionClass(isoDate: string, startDate: string, endDate: string) {
@@ -78,16 +90,26 @@ export function SelectableCalendarDay({
     >
       <div className="calendarDate">{dayNumber}</div>
       <div className="calendarTripStack">
-        {trips.map((trip) => (
+        {trips.map(({ trip, dayRole }) => (
           <Link
             key={trip.id}
-            className={`calendarTrip calendarTrip-${trip.status}`}
+            className={`calendarTrip calendarTrip-${trip.status} calendarTrip-${dayRole}`}
             href={`/trips/${trip.id}`}
+            aria-label={`${trip.destination}. ${dayRoleLabels[dayRole]}.`}
             onClick={(event) => event.stopPropagation()}
             onKeyDown={(event) => event.stopPropagation()}
           >
-            <span>{trip.destination}</span>
-            <StatusBadge status={trip.status} />
+            <span className="calendarTripTitle">{trip.destination}</span>
+            <span className="calendarTripFooter">
+              {dayRole !== "stay" ? (
+                <span
+                  className={`calendarTripDayRole calendarTripDayRole-${dayRole}`}
+                >
+                  {dayRoleLabels[dayRole]}
+                </span>
+              ) : null}
+              <StatusBadge status={trip.status} />
+            </span>
           </Link>
         ))}
       </div>

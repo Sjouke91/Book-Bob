@@ -364,6 +364,7 @@ pre {
 }
 
 .calendarTrip {
+  position: relative;
   display: grid;
   gap: 6px;
   min-height: 58px;
@@ -372,12 +373,70 @@ pre {
   border: 1px solid transparent;
   font-size: 13px;
   font-weight: 750;
+  overflow: hidden;
 }
 
-.calendarTrip span:first-child {
+.calendarTrip::before {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 4px;
+  content: "";
+}
+
+.calendarTrip-pickup::before {
+  background: var(--green);
+}
+
+.calendarTrip-return::before {
+  right: 0;
+  left: auto;
+  background: var(--coral);
+}
+
+.calendarTrip-same-day::before {
+  background: linear-gradient(180deg, var(--green) 0 50%, var(--coral) 50% 100%);
+}
+
+.calendarTripTitle {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.calendarTripFooter {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.calendarTripDayRole {
+  width: fit-content;
+  display: inline-flex;
+  align-items: center;
+  min-height: 24px;
+  padding: 4px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.calendarTripDayRole-pickup {
+  background: #dff1e8;
+  color: var(--green);
+}
+
+.calendarTripDayRole-return {
+  background: #f5e3e1;
+  color: var(--coral);
+}
+
+.calendarTripDayRole-same-day {
+  background: #e8eefb;
+  color: var(--blue);
 }
 
 .calendarTrip-approved {

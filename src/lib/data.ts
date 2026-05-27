@@ -126,8 +126,10 @@ export async function assertNoApprovedOverlap(
     .select("id, destination, start_date, end_date")
     .eq("camper_id", camperId)
     .in("status", ["approved", "completed"])
-    .lte("start_date", endDate)
-    .gte("end_date", startDate);
+    // Treat availability as half-open: [pickup, return).
+    // A return date can be reused as another trip's pickup date.
+    .lt("start_date", endDate)
+    .gt("end_date", startDate);
 
   if (excludeTripId) {
     query = query.neq("id", excludeTripId);

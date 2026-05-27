@@ -16,6 +16,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
+   - In Vercel, either leave `NEXT_PUBLIC_APP_URL` unset or set it to your deployed `https://` URL. Do not set the production value to localhost, or email links will point back to your machine.
+
 4. Optional email delivery:
 
 ```bash
