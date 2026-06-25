@@ -27,6 +27,7 @@ import { ApprovalPanel } from "@/components/ApprovalPanel";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TogglePanel } from "@/components/TogglePanel";
 import { TripForm } from "@/components/TripForm";
+
 import { dateRangeLabel, toInputTime } from "@/lib/dates";
 import { getPendingChangeRequests, getTripById, getTripPhotos } from "@/lib/data";
 import { requireUser } from "@/lib/auth";
