@@ -1,4 +1,3 @@
-import { redirect } from "next/navigation";
 import type { SupabaseClient } from "@supabase/supabase-js";
 
 import { createClient } from "@/lib/supabase/server";
@@ -14,32 +13,10 @@ type ClaimsResponse = {
 };
 
 export async function getCurrentUserOrNull() {
-  // Dev bypass: auto-login on localhost using GMAIL_USER as the identity
-  if (
-    process.env.NODE_ENV === "development" &&
-    process.env.GMAIL_USER &&
-    process.env.SUPABASE_SECRET_KEY
-  ) {
-    const { createAdminClient } = await import("@/lib/supabase/admin");
-    const adminClient = createAdminClient();
-    const { data: profile } = await adminClient
-      .from("profiles")
-      .select("id, email, full_name")
-      .eq("email", process.env.GMAIL_USER.toLowerCase())
-      .single();
+  const bypassContext = await getNoLoginContext();
 
-    if (profile) {
-      return {
-        supabase: adminClient,
-        user: {
-          id: profile.id as string,
-          email: profile.email as string,
-          name:
-            (profile.full_name as string | null) ??
-            (profile.email as string).split("@")[0]
-        }
-      };
-    }
+  if (bypassContext) {
+    return bypassContext;
   }
 
   const supabase = await createClient();
@@ -70,12 +47,55 @@ export async function requireUser() {
   const context = await getCurrentUserOrNull();
 
   if (!context.user) {
-    redirect("/login");
+    throw new Error(
+      "No-login mode requires SUPABASE_SECRET_KEY and BOOK_BOB_SHARED_USER_EMAIL (or GMAIL_USER) to match an existing Supabase profile."
+    );
   }
 
   return context as {
     supabase: SupabaseClient;
     user: UserContext;
+  };
+}
+
+async function getNoLoginContext() {
+  const sharedEmail = (
+    process.env.BOOK_BOB_SHARED_USER_EMAIL ?? process.env.GMAIL_USER
+  )
+    ?.trim()
+    .toLowerCase();
+
+  if (!sharedEmail || !process.env.SUPABASE_SECRET_KEY) {
+    return null;
+  }
+
+  const { createAdminClient } = await import("@/lib/supabase/admin");
+  const adminClient = createAdminClient();
+  const { data: profile, error } = await adminClient
+    .from("profiles")
+    .select("id, email, full_name")
+    .eq("email", sharedEmail)
+    .maybeSingle();
+
+  if (error) {
+    throw new Error(error.message);
+  }
+
+  if (!profile) {
+    throw new Error(
+      `No profile found for ${sharedEmail}. Create that user once in Supabase or set BOOK_BOB_SHARED_USER_EMAIL to an existing profile email.`
+    );
+  }
+
+  return {
+    supabase: adminClient,
+    user: {
+      id: profile.id as string,
+      email: profile.email as string,
+      name:
+        (profile.full_name as string | null) ??
+        (profile.email as string).split("@")[0]
+    }
   };
 }
 

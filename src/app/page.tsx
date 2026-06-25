@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { LogOut, Plus, Settings, Trash2, Van } from "lucide-react";
+import { Plus, Settings, Trash2, Van } from "lucide-react";
 
-import { createCamper, createTrip, deleteTrip, signOut } from "@/app/actions";
+import { createCamper, createTrip, deleteTrip } from "@/app/actions";
 import { MobileTabLayout } from "@/components/MobileTabLayout";
 import { CalendarMonth } from "@/components/CalendarMonth";
 import { SetupInstructions } from "@/components/SetupInstructions";
@@ -34,7 +34,7 @@ export default async function Home({ searchParams }: HomeProps) {
   if (campers.length === 0) {
     return (
       <main className="appShell">
-        <TopBar userName={user.name} />
+        <TopBar />
         <section className="emptyState">
           <div>
             <h1>Add your camper</h1>
@@ -146,7 +146,7 @@ export default async function Home({ searchParams }: HomeProps) {
 
   return (
     <main className="appShell">
-      <TopBar userName={user.name} />
+      <TopBar />
 
       {isWelcome ? (
         <div className="welcomeBanner">
@@ -245,7 +245,7 @@ export default async function Home({ searchParams }: HomeProps) {
   );
 }
 
-function TopBar({ userName }: { userName: string }) {
+function TopBar() {
   return (
     <header className="topBar">
       <Link className="brand" href="/">
@@ -263,16 +263,6 @@ function TopBar({ userName }: { userName: string }) {
         >
           <Settings size={17} aria-hidden />
         </Link>
-        <form action={signOut}>
-          <button
-            className="iconButton"
-            type="submit"
-            title={`Sign out (${userName})`}
-            aria-label="Sign out"
-          >
-            <LogOut size={17} aria-hidden />
-          </button>
-        </form>
       </div>
     </header>
   );

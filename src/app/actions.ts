@@ -72,29 +72,16 @@ export async function signInWithEmail(formData: FormData) {
   const email = normalizeEmail(formData.get('email'));
 
   if (!email) {
-    redirect('/login?error=Email+is+required');
+    redirect('/');
   }
 
-  const supabase = await createClient();
-  const origin = await appUrl();
-  const { error } = await supabase.auth.signInWithOtp({
-    email,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
-  });
-
-  if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`);
-  }
-
-  redirect('/login?sent=1');
+  redirect('/');
 }
 
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect('/login');
+  redirect('/');
 }
 
 export async function createCamper(formData: FormData) {
@@ -133,7 +120,7 @@ export async function createCamper(formData: FormData) {
       { onConflict: 'camper_id,email' },
     );
 
-    const inviteUrl = `${await appUrl()}/login`;
+    const inviteUrl = await appUrl();
     await sendEmail({
       to: [friendEmail],
       subject: `You were invited to ${camper.name}`,
@@ -754,7 +741,7 @@ export async function addCamperRecipient(formData: FormData) {
   }
 
   try {
-    const inviteUrl = `${await appUrl()}/login`;
+    const inviteUrl = await appUrl();
     await sendEmail({
       to: [email],
       subject: `You were added to ${camperRow?.name ?? 'a shared camper'}`,

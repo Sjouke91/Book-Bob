@@ -13,10 +13,13 @@ A Next.js App Router MVP for sharing a camper calendar, requesting bookings, app
 ```bash
 NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=sb_publishable_your_key
+SUPABASE_SECRET_KEY=sb_secret_your_key
+BOOK_BOB_SHARED_USER_EMAIL=owner@example.com
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 ```
 
    - In Vercel, either leave `NEXT_PUBLIC_APP_URL` unset or set it to your deployed `https://` URL. Do not set the production value to localhost, or email links will point back to your machine.
+   - `BOOK_BOB_SHARED_USER_EMAIL` is the shared no-login user. It must match an existing profile in Supabase.
 
 4. Optional email delivery:
 
@@ -34,4 +37,4 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`, sign in by magic link, create the camper, and invite the second owner.
+Open `http://localhost:3000` to go straight to the shared camper calendar.
